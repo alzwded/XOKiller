@@ -92,21 +92,37 @@ function Enem(type, x, y) {
             // check adjacent(1) and transfer if possible
             if(enem_can(map.adjacent[1], xCell, yCell + map.adjacent[1].height())) {
                 
-                // transfer
+                this.x = newX
+                this.y = newY
+                transfers.push(new Transfer(this, map.enemies, map.adjacent[1].enemies))
+            } else if(enem_can(map.adjacent[1], enem_cell(this.x, map.adjacent[1].width()), newY)) {
+                this.y = newY
+                transfers.push(new Transfer(this, map.enemies, map.adjacent[1].enemies))
             }
         }
         if(xCell >= map.width()) {
             // check adjacent (0) and transfer if possible
             if(enem_can(map.adjacent[0], xCell - map.adjacent[0].width(), yCell)) {
-                // transfer
+                this.x = newX
+                this.y = newY
+                transfers.push(new Transfer(this, map.enemies, map.adjacent[0].enemies))
+            } else if(enem_can(map.adjacent[0], xCell - map.adjacent[0].width(), enem_cell(this.y, map.adjacent[0].height()))) {
+                this.x = newX
+                transfers.push(new Transfer(this, map.enemies, map.adjacent[0].enemies))
             }
         }
         if(yCell >= map.height()) {
             // check adjacent (3) and transfer if possible
             if(enem_can(map.adjacent[3], xCell, yCell - map.adjacent[3].height())) {
-                // transfer
+                this.x = newX
+                this.y = newY
+                transfers.push(new Transfer(this, map.enemies, map.adjacent[3].enemies))
+            } else if(enem_can(map.adjacent[3], enem_cell(this.x, map.adjacent[3].width()), yCell - map.adjacent[3].height())) {
+                this.y = newY
+                transfers.push(new Transfer(this, map.enemies, map.adjacent[3].enemies))
             }
         }
+
         if(enem_can(map, enem_cell(newX, map.width()), enem_cell(newY, map.height()))) {
             this.x = newX
             this.y = newY
