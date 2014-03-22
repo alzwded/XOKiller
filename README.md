@@ -22,3 +22,10 @@ TODO
 * points counter, time counter
 * lives system
 * spawn point
+* bullets
+  - PC bullets firing & mouse input
+  - X and BOSS bullets
+* input
+  - keyboard/mouse
+  - gamepad A
+  - gamepad B

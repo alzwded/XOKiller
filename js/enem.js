@@ -125,8 +125,3 @@ function enem_cell(x, w) {
 function enem_can(map, cellX, cellY) {
     return !map.layout[cellX * map.width() + cellY]
 }
-
-        if(!map.layout[map.width() * Math.floor(newX * map.width()) + Math.floor(newY * map.height())]) {
-        } else if(!map.layout[map.width() * Math.floor(this.x * map.width()) + Math.floor(newY * map.height())]) {
-        } else if(!map.layout[map.width() * Math.floor(newX * map.width()) + Math.floor(this.y * map.height())]) {
-        }
