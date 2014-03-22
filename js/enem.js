@@ -1,3 +1,22 @@
+var enem_transfers = new Array()
+
+function executeTransfers() {
+    enem_transfers.forEach(function(tsfr) {
+        tsfr.from.removeIf(function(elem) {
+            return elem == tsfr.who
+        });
+        tsfr.to.push(tsfr.who)
+    })
+
+    enem_transfers = new Array()
+}
+
+function Transfer(who, from, to) {
+    this.who = who
+    this.from = from
+    this.to = to
+}
+
 function Enem(type, x, y) {
     this.type = type
     this.x = x
@@ -56,15 +75,58 @@ function Enem(type, x, y) {
         var corr = this.corr()
         var newX = this.x + this.speed() * cosA + Math.random() * corr - corr/2
         var newY = this.y + this.speed() * sinA + Math.random() * corr - corr/2
-
-        if(!map.layout[map.width() * Math.floor(newX * map.width()) + Math.floor(newY * map.height())]) {
+        var xCell = enem_cell(newX, map.width())
+        var yCell = enem_cell(newY, map.height())
+        if(xCell < 0) {
+            // check adjacent(2) and transfer if possible
+            if(enem_can(map.adjacent[2], xCell + map.adjacent[2].width(), yCell)) {
+                this.x = newX
+                this.y = newY
+                transfers.push(new Transfer(this, map.enemies, map.adjacent[2].enemies))
+            } else if(enem_can(map.adjacent[2], xCell + map.adjacent[2].width(), enem_cell(this.y, map.height()))) {
+                this.x = newX
+                transfers.push(new Transfer(this, map.enemies, map.adjacent[2].enemies))
+            }
+        }
+        if(yCell < 0) {
+            // check adjacent(1) and transfer if possible
+            if(enem_can(map.adjacent[1], xCell, yCell + map.adjacent[1].height())) {
+                
+                // transfer
+            }
+        }
+        if(xCell >= map.width()) {
+            // check adjacent (0) and transfer if possible
+            if(enem_can(map.adjacent[0], xCell - map.adjacent[0].width(), yCell)) {
+                // transfer
+            }
+        }
+        if(yCell >= map.height()) {
+            // check adjacent (3) and transfer if possible
+            if(enem_can(map.adjacent[3], xCell, yCell - map.adjacent[3].height())) {
+                // transfer
+            }
+        }
+        if(enem_can(map, enem_cell(newX, map.width()), enem_cell(newY, map.height()))) {
             this.x = newX
             this.y = newY
-        } else if(!map.layout[map.width() * Math.floor(this.x * map.width()) + Math.floor(newY * map.height())]) {
+        } else if(enem_can(map, enem_cell(this.x, map.width()), enem_cell(newY, map.height()))) {
             this.y = newY
-        } else if(!map.layout[map.width() * Math.floor(newX * map.width()) + Math.floor(this.y * map.height())]) {
+        } else if(enem_can(map, enem_cell(newX, map.width()), enem_cell(this.y, map.height()))) {
             this.x = newX
         }
     }
 }
 
+function enem_cell(x, w) {
+    return Math.floor(x * w)
+}
+
+function enem_can(map, cellX, cellY) {
+    return !map.layout[cellX * map.width() + cellY]
+}
+
+        if(!map.layout[map.width() * Math.floor(newX * map.width()) + Math.floor(newY * map.height())]) {
+        } else if(!map.layout[map.width() * Math.floor(this.x * map.width()) + Math.floor(newY * map.height())]) {
+        } else if(!map.layout[map.width() * Math.floor(newX * map.width()) + Math.floor(this.y * map.height())]) {
+        }

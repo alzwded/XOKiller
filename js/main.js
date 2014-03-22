@@ -117,11 +117,16 @@ function loop() {
             pY += speed
         }
     } else if(dleft) {
-        pX -= speed
+        if(dright) {
+        } else {
+            pX -= speed
+        }
     } else if(dright) {
-        pX += speed
+        if(dleft) {
+        } else {
+            pX += speed
+        }
     }
-
 
     rooms.forEach(function(r) {
         var rx = r.x - pX
@@ -169,6 +174,8 @@ function loop() {
     } else {
         ticks = 0
     }
+
+    executeTransfers()
 
     ctx.drawImage(buffer, 0, 0)
 
