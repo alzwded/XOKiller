@@ -1,0 +1,170 @@
+
+ ___________________________________________________________________
+|X|_______________________________________________________________|^|
+|        TIME: 9:99       x \                   SCORE: 48509        |
+|        FLOOR:  17          \                  LIVES: ...          |
+|                                                                   |
+|                                                                   |
+|           x                \                                      |
+|                        o    \                  o                  |
+|                                                                   |
+|                                                          o        |
+|                                \                                  |
+|                                 \                                 |
+|             o                    .                                |
+| __   __                                                           |
+|                                                                   |
+|                                                                   |
+|                  o                                                |
+|                                                          o        |
+|                                                                   |
+|                               o                                   |
+|                                                o                  |
+|                                                                   |
+|___________________________________________________________________|
+
+repurpose to browser.
+Logic in javascript. Rendering in HTML5 canvas.
+
+You are "."
+You shoot laser on a reasonable timer.
+. is always centered.
+There are always hundreds of "o" that go straight at you.
+There is a maze to avoid.
+
+. is white.
+Lasers are white.
+o's are red.
+Maze is neon blue.
+
+x's are more rare and they shoot at you with yellow lasers.
+
+High scores can be kept.
+
+Control scheme:
+Mouse + Keyboard
+* WASD move
+* Mouse XY - aim
+* Mouse LB - shoot. Hold to shoot on a timer
+Joystick A
+* Left Analogue stick - move
+* Right Analogue stick - aim & shoot
+Joystick B
+* D-Pad - move
+* 0 - shoot
+* L1, L2 - aim counter-clockwise slow/fast
+* R1, R2 - aim clockwise slow/fast
+
+Your aim is to solve the maze in the designated time or lose a life.
+Touching anything red/yellow will cause you to lose a life.
+If enemies touch your white lazers, they lose hitpoints or go away.
+o's and x's have random (but reasonable) amounts of hitpoints. (i.e. 1, 3, 7, whatever).
+
+Every 5 levels or so there is a boss instead of a maze escape. They have 42 hit points and give you 10000 points. They are big (say... 5x5 cells considering an o to be one cell) and shoot a couple of parallel lasers.
+
+
+
+Dot {
+    float x, y;
+    float shootingAngle;
+    bool shooting;
+    float movingAngle;
+    bool moving;
+}
+
+Enem {
+    int hp; // influences color from green to red (255 max)
+    float x, y;
+    enum { X, O, BOSS } type;
+}
+
+Lasr {
+    float x, y;
+    float angle;
+    float length;
+    enum { WHITE, YELLOW } color;
+}
+
+
+
+Map should be procedurally generated. First implementation: define a couple of standard rooms with possible NWSE exits and paste them together.
+
+Spwn {
+    float x, y;
+    int num; // num badies spawned, or <0 for infinite
+}
+
+Room {
+    int predefinedType;
+    struct {
+        bool N:1, W:1, S:1, E:1;
+    } exits;
+    list<Spwn*> spawnPoints;
+    list<Enem*> enemies;
+    Room* adjacent[4];
+}
+
+
+
+Window is 640x480, a room should be like 400x400.
+A room is 1.0fx1.0f in terms of in-game sizes.
+
+
+
+Procedural map generator:
+* pick one random block
+* foreach spawn point, set it active or inactive, finite or infinite skewed towards finite and towards very large numbers
+* for each potential exit, flip a coin. If heads, generate a new room in that direction unless 100 rooms have already been generated. Repeat.
+* pick a random room. This one will be the teleporter/boss room.
+
+
+
+
+Expansion
+=========
+
+Powerups:
+    * Shortgun/Spazer
+    * Slow moving energy ball that continuously hurts.
+    * Shield
+    * Speed
+
+Downgrades:
+    * Short laser
+    * Half Damage
+    * Kaput
+    * Slow
+
+More bosses.
+Save the hostages situation.
+More annoying enemies.
+
+Notes
+=====
+
+Render
+------
+<canvas id="myCanvas" width="200" height="100"
+style="border:1px solid #000000;">
+</canvas>
+<script>
+var c = document.getElementById("myCanvas");
+var ctx = c.getContext("2d");
+ctx.fillStyle = "#FF0000";
+ctx.fillRect(0,0,150,75);
+</script>
+
+Input
+-----
+
+###Keyboard/Mouse
+https://www.ibm.com/developerworks/library/wa-games/
+
+###Gamepad
+http://www.html5rocks.com/en/tutorials/doodles/gamepad/gamepad-tester/gamepad.js
+http://www.html5rocks.com/en/tutorials/doodles/gamepad/gamepad-tester/tester.js
+
+Sound
+-----
+var snd = new Audio("file.wav"); // buffers automatically when created
+snd.play();
