@@ -118,6 +118,7 @@ Procedural map generator:
 * pick a random room. This one will be the teleporter/boss room.
 
 
+Time/floor is 1 minute * number of rooms.
 
 
 Expansion
