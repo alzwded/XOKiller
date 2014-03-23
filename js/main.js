@@ -131,37 +131,9 @@ function loop() {
     rooms.forEach(function(r) {
         var rx = r.x - pX
         var ry = r.y - pY
+        r.loop(rx, ry)
         r.draw(backCtx, rx, ry)
 
-        var spawns = r.map.spawns
-        spawns.forEach(function(spwn) {
-            spwn.loop(r)
-        })
-        spawns.removeIf(function(spwn) {
-            return spwn.num == 0
-        })
-
-        var enemies = r.enemies
-        enemies.forEach(function(enem) {
-            // compute absolute x and y from room offset
-            var x = enem.x * r.map.width() * r.map.cellL() + rx
-            var y = enem.y * r.map.height() * r.map.cellL() + ry
-            enem.draw(backCtx, x, y)
-        })
-
-        // x and y are computed relative to the room
-        // if adjacent room, add or substract 1 depending on which one it is
-        var x = (320 - rx) / (r.map.width() * r.map.cellL())
-        var y = (240 - ry) / (r.map.height() * r.map.cellL())
-        //console.log(rx + " " + ry + " " + x + " " + y + " " + pX + " " + pY)
-
-        enemies.forEach(function(enem) {
-            enem.loop(x, y, r.map)
-        })
-
-        enemies.removeIf(function(enem) {
-            return enem.hp <= 0 && enem.frame > 20
-        })
     })
 
     backCtx.fillStyle = "white"

@@ -105,5 +105,43 @@ function Room(seed, x, y) {
         })
         ctx.closePath()
         ctx.stroke()
+
+        var map = this.map
+        var fx = function(ex) {
+            return ex * map.width() * map.cellL() + x
+        }
+        var fy = function(ey) {
+            return ey * map.height() * map.cellL() + y
+        }
+        this.enemies.forEach(function(enem) {
+            // compute absolute x and y from room offset
+            enem.draw(ctx, fx(enem.x), fy(enem.y))
+        })
+
+    }
+
+    this.loop = function(rx, ry) {
+        var spawns = this.map.spawns
+        var r = this
+        spawns.forEach(function(spwn) {
+            spwn.loop(r)
+        })
+        spawns.removeIf(function(spwn) {
+            return spwn.num == 0
+        })
+
+        // x and y are computed relative to the room
+        // if adjacent room, add or substract 1 depending on which one it is
+        var x = (320 - rx) / (r.map.width() * r.map.cellL())
+        var y = (240 - ry) / (r.map.height() * r.map.cellL())
+
+        var map = this.map
+        this.enemies.forEach(function(enem) {
+            enem.loop(x, y, map)
+        })
+
+        this.enemies.removeIf(function(enem) {
+            return enem.hp <= 0 && enem.frame > 20
+        })
     }
 }
