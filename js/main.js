@@ -168,6 +168,9 @@ function loop() {
     backCtx.fillRect(317, 237, 6, 6)
 
     ticks++
+    if(ticks >= 120) {
+        ticks = 0
+    }
     if(ticks < 60) {
         var l = (ticks%60)/60 * 640
         backCtx.fillStyle = "cyan"
@@ -180,8 +183,6 @@ function loop() {
         backCtx.fillRect(0, 0, l, 2)
         backCtx.fillStyle = "cyan"
         backCtx.fillRect(l, 0, 640 - l, 2)
-    } else {
-        ticks = 0
     }
 
     executeTransfers()
