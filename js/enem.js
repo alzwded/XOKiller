@@ -6,15 +6,19 @@ function executeTransfers() {
             return elem == tsfr.who
         });
         tsfr.to.push(tsfr.who)
+        tsfr.who.x += tsfr.correctionX
+        tsfr.who.y += tsfr.correctionY
     })
 
     enem_transfers = new Array()
 }
 
-function Transfer(who, from, to) {
+function Transfer(who, from, to, correctionX, correctionY) {
     this.who = who
     this.from = from
     this.to = to
+    this.correctionX = correctionX
+    this.correctionY = correctionY
 }
 
 function Enem(type, x, y) {
@@ -82,10 +86,10 @@ function Enem(type, x, y) {
             if(enem_can(map.adjacent[2], xCell + map.adjacent[2].width(), yCell)) {
                 this.x = newX
                 this.y = newY
-                transfers.push(new Transfer(this, map.enemies, map.adjacent[2].enemies))
+                transfers.push(new Transfer(this, map.enemies, map.adjacent[2].enemies, 1.0, 0.0))
             } else if(enem_can(map.adjacent[2], xCell + map.adjacent[2].width(), enem_cell(this.y, map.height()))) {
                 this.x = newX
-                transfers.push(new Transfer(this, map.enemies, map.adjacent[2].enemies))
+                transfers.push(new Transfer(this, map.enemies, map.adjacent[2].enemies, 1.0, 0.0))
             }
         }
         if(yCell < 0) {
@@ -94,10 +98,10 @@ function Enem(type, x, y) {
                 
                 this.x = newX
                 this.y = newY
-                transfers.push(new Transfer(this, map.enemies, map.adjacent[1].enemies))
+                transfers.push(new Transfer(this, map.enemies, map.adjacent[1].enemies, 0.0, 1.0))
             } else if(enem_can(map.adjacent[1], enem_cell(this.x, map.adjacent[1].width()), newY)) {
                 this.y = newY
-                transfers.push(new Transfer(this, map.enemies, map.adjacent[1].enemies))
+                transfers.push(new Transfer(this, map.enemies, map.adjacent[1].enemies, 0.0, 1.0))
             }
         }
         if(xCell >= map.width()) {
@@ -105,10 +109,10 @@ function Enem(type, x, y) {
             if(enem_can(map.adjacent[0], xCell - map.adjacent[0].width(), yCell)) {
                 this.x = newX
                 this.y = newY
-                transfers.push(new Transfer(this, map.enemies, map.adjacent[0].enemies))
+                transfers.push(new Transfer(this, map.enemies, map.adjacent[0].enemies, -1.0, 0.0))
             } else if(enem_can(map.adjacent[0], xCell - map.adjacent[0].width(), enem_cell(this.y, map.adjacent[0].height()))) {
                 this.x = newX
-                transfers.push(new Transfer(this, map.enemies, map.adjacent[0].enemies))
+                transfers.push(new Transfer(this, map.enemies, map.adjacent[0].enemies, -1.0, 0.0))
             }
         }
         if(yCell >= map.height()) {
@@ -116,10 +120,10 @@ function Enem(type, x, y) {
             if(enem_can(map.adjacent[3], xCell, yCell - map.adjacent[3].height())) {
                 this.x = newX
                 this.y = newY
-                transfers.push(new Transfer(this, map.enemies, map.adjacent[3].enemies))
+                transfers.push(new Transfer(this, map.enemies, map.adjacent[3].enemies, 0.0, -1.0))
             } else if(enem_can(map.adjacent[3], enem_cell(this.x, map.adjacent[3].width()), yCell - map.adjacent[3].height())) {
                 this.y = newY
-                transfers.push(new Transfer(this, map.enemies, map.adjacent[3].enemies))
+                transfers.push(new Transfer(this, map.enemies, map.adjacent[3].enemies, 0.0, -1.0))
             }
         }
 
