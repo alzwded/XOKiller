@@ -5,9 +5,23 @@ function Spwn(num, x, y, type) {
     this.x = x
     this.y = y
     this.type = type
-    this.loop = function(map) {
-        if(this.ticks == 300) {
-            map.enemies.push(new Enem(type, x, y))
+    this.loop = function(room) {
+        ++this.ticks
+        if(this.num == 0) {
+            this.loop = function() {}
+            return
+        }
+        if(this.num > 0) {
+            if(this.ticks == 60) {
+                this.num--
+                this.ticks = 0
+                room.enemies.push(new Enem(type, x, y))
+            }
+        } else {
+            if(this.ticks == -this.num) {
+                this.ticks = 0
+                room.enemies.push(new Enem(type, x, y))
+            }
         }
     }
 }
@@ -43,6 +57,9 @@ function Map(seed) {
     this.layout[ 9 * this.width() + 12] = true
     this.layout[10 * this.width() + 12] = true
     this.layout[10 * this.width() + 11] = true
+
+    this.spawns.push(new Spwn(100, 0.055, 0.23, '0'))
+    this.spawns.push(new Spwn(100, 0.6, 0.2, '0'))
 }
 
 function Room(seed, x, y) {
@@ -55,6 +72,7 @@ function Room(seed, x, y) {
     this.draw = function(ctx, x, y) {
         ctx.strokeStyle = "cyan"
         ctx.fillStyle = "cyan"
+        ctx.lineWidth = 3
         ctx.beginPath()
         for(var i = 0; i < this.map.width(); ++i) {
             for(var j = 0; j < this.map.height(); ++j) {
@@ -70,5 +88,22 @@ function Room(seed, x, y) {
         ctx.closePath()
         ctx.stroke()
         ctx.fill()
+
+        ctx.beginPath()
+        ctx.strokeStyle = "#FF00FF"
+        ctx.lineWidth = 5
+        var w = this.map.width() * this.map.cellL()
+        var h = this.map.height() * this.map.cellL()
+        this.map.spawns.forEach(function(spwn) {
+            var sx = x + spwn.x * w
+            var sy = y + spwn.y * h
+            ctx.moveTo(sx - 10, sy - 10)
+            ctx.lineTo(sx + 10, sy - 10)
+            ctx.lineTo(sx + 10, sy + 10)
+            ctx.lineTo(sx - 10, sy + 10)
+            ctx.lineTo(sx - 10, sy - 10)
+        })
+        ctx.closePath()
+        ctx.stroke()
     }
 }

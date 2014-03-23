@@ -16,15 +16,15 @@ function reset() {
     rooms[0] = new Room(0, 100, 50)
 
     var enemies = new Array()
-    enemies[0] = new Enem('O', 0.2, 0.2)
-    enemies[1] = new Enem('O', 0.1, 0.2)
-    for(var k = 0; k < 200; ++k) {
-        var d = (k+1)/200
-        enemies[2 + k] = new Enem('O', 0.05 + 0.1*d, 0.2 + 0.06*d)
-    }
-    enemies[200] = new Enem('O', 0.6, 0.2)
-    enemies[201] = new Enem('O', 1.0, 1.0)
-    enemies[201].loop = function() {}
+    //enemies[0] = new Enem('O', 0.2, 0.2)
+    //enemies[1] = new Enem('O', 0.1, 0.2)
+    //for(var k = 0; k < 200; ++k) {
+    //    var d = (k+1)/200
+    //    enemies[2 + k] = new Enem('O', 0.05 + 0.1*d, 0.2 + 0.06*d)
+    //}
+    //enemies[200] = new Enem('O', 0.6, 0.2)
+    //enemies[201] = new Enem('O', 1.0, 1.0)
+    //enemies[201].loop = function() {}
 
     rooms[0].enemies = enemies
 }
@@ -132,6 +132,15 @@ function loop() {
         var rx = r.x - pX
         var ry = r.y - pY
         r.draw(backCtx, rx, ry)
+
+        var spawns = r.map.spawns
+        spawns.forEach(function(spwn) {
+            spwn.loop(r)
+        })
+        spawns.removeIf(function(spwn) {
+            return spwn.num == 0
+        })
+
         var enemies = r.enemies
         enemies.forEach(function(enem) {
             // compute absolute x and y from room offset
