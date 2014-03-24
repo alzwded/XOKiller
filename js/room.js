@@ -58,8 +58,8 @@ function Map(seed) {
     this.layout[10 * this.width() + 12] = true
     this.layout[10 * this.width() + 11] = true
 
-    this.spawns.push(new Spwn(100, 0.055, 0.23, '0'))
-    this.spawns.push(new Spwn(100, 0.6, 0.2, '0'))
+    this.spawns.push(new Spwn(100, 0.055, 0.23, 'O'))
+    this.spawns.push(new Spwn(100, 0.6, 0.2, 'O'))
 }
 
 function Room(seed, x, y) {

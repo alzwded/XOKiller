@@ -20,7 +20,7 @@ function Bllt(x, y, theta) {
     this.hp = this.getInitHP()
     this.width = 1
     this.speed = 0.9/80
-    this.getDamage = function() { return 4.5 }
+    this.getDamage = function() { return 3.5 }
     this.getDecrement = function() { return 3 }
     this.getMaxWidth = function() { return 80 }
     this.getNumIncreaseFrames = function() { return 24 }

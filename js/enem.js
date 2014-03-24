@@ -22,16 +22,21 @@ function Transfer(who, from, to, correctionX, correctionY) {
 }
 
 function Enem(type, x, y) {
+    var self = this
     this.type = type
     this.x = x
     this.y = y
-    this.hp = Math.round(Math.random() * 10.0 + 1.0)
-    this.frame = 0
-    this.getColor = function() {
-        var red = 255 - this.hp
-        var green = this.hp
-        return "rgb(" + red + ", " + green + ", 0)"
+    if(type === 'O') {
+        self.getMaxHP = function() { return 10 }
+        self.getColor = function() {
+            var hp = self.hp / self.getMaxHP() * 255
+            var red = Math.floor(255 - hp)
+            var green = Math.floor(hp)
+            return "rgb(" + red + ", " + green + ", 0)"
+        }
     }
+    this.frame = 0
+    this.hp = Math.round(Math.random() * self.getMaxHP() + 1.0)
     this.draw = function(ctx, x, y) {
         if(this.hp > 0) {
             ctx.beginPath()
