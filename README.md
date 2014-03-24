@@ -30,3 +30,6 @@ TODO
   - ~~keyboard/mouse~~
   - gamepad A
   - gamepad B
+* re-write spec to be coherent and to be a game manual
+  - initial re-writing
+  - actual manual PDF (a la old-skool)
