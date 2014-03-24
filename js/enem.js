@@ -149,5 +149,6 @@ function enem_cell(x, w) {
 }
 
 function enem_can(map, cellX, cellY) {
+    if(map == undefined) return
     return !map.layout[cellX * map.width() + cellY]
 }
