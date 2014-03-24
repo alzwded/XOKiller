@@ -1,9 +1,9 @@
 function inTriangle_side(p, p1, p2) {
-    return (p[0] - p2[0]) * (p1[1] - p2[1]) - (p1[0] - p2[0]) * (p[1] - p2[1]) < 0.0
+    return (p.x - p2.x) * (p1.y - p2.y) - (p1.x - p2.x) * (p.y - p2.y) < 0.0
 }
 
 function inTriangle(x, y, p1, p2, p3) {
-    var myP = new Array(x, y)    
+    var myP = { x: x, y: y }
 
     var t1 = inTriangle_side(myP, p1, p2)
     var t2 = inTriangle_side(myP, p2, p3)
@@ -42,10 +42,10 @@ function Bllt(x, y, theta) {
 
         var l = self.width / 2 / (room.map.width() * room.map.cellL()) + (1.e-2 / 2)
         var sq = new Array()
-        sq[0] = new Array(newX - l * sin_theta, newY + l * cos_theta)
-        sq[1] = new Array(newX + l * sin_theta, newY - l * cos_theta)
-        sq[2] = new Array(invX - l * sin_theta, invY + l * cos_theta)
-        sq[3] = new Array(invX + l * sin_theta, invY - l * cos_theta)
+        sq[0] = { x: newX - l * sin_theta, y: newY + l * cos_theta }
+        sq[1] = { x: newX + l * sin_theta, y: newY - l * cos_theta }
+        sq[2] = { x: invX - l * sin_theta, y: invY + l * cos_theta }
+        sq[3] = { x: invX + l * sin_theta, y: invY - l * cos_theta }
 
         room.enemies.forEach(function(enem) {
             if(inTriangle(enem.x, enem.y, sq[0], sq[1], sq[2])
