@@ -6,6 +6,11 @@ var pX, pY
 var dup, ddown, dleft, dright
 var hit = false
 var clickFrames
+var mouse = {
+    x: 0,
+    y: 0,
+    down: false,
+}
 
 function reset() {
     hit = false
@@ -51,30 +56,27 @@ function initCanvas() {
     var c = document.getElementById("surface")
     ctx = c.getContext("2d")
 
+    c.onmousedown = function(e) {
+        e.preventDefault()
+        mouse.down = true
+        mouse.x = e.offsetX
+        mouse.y = e.offsetY
+    }
+
+    c.onmouseup = function(e) {
+        e.preventDefault()
+        mouse.down = false
+    }
+
+    c.onmousemove = function(e) {
+        e.preventDefault()
+        mouse.x = e.offsetX
+        mouse.y = e.offsetY
+    }
+
     c.onclick = function(e) {
         e.preventDefault()
 
-        if(clickFrames > 0) { return }
-        else { clickFrames = 30 }
-
-        var mouse = {
-            x: e.offsetX,//e.pageX - c.offsetLeft,
-            y: e.offsetY,//e.pageY - c.offsetTop,
-        }
-        var pp = { x: 320, y: 240 }
-
-        if(mouse.x == pp.x && mouse.y == pp.y) { return }
-
-        var d = Math.sqrt( (pp.y - mouse.y) * (pp.y - mouse.y) + (pp.x - mouse.x) * (pp.x - mouse.x) )
-        var theta = Math.acos((mouse.x - pp.x) / d)
-
-        if(mouse.y < pp.y) {
-            theta = -theta
-        }
-
-        var x = (pX - rooms[0].x + 320) / (rooms[0].map.width() * rooms[0].map.cellL())
-        var y = (pY - rooms[0].y + 240) / (rooms[0].map.height() * rooms[0].map.cellL())
-        rooms[0].bullets.push(new Bllt(x, y, theta))
     }
 
     buffer = document.createElement('canvas')
@@ -119,6 +121,28 @@ function initCanvas() {
     setInterval(loop, 17)
 }
 
+function loop_shooting(room) {
+    if(!mouse.down) { return }
+    if(clickFrames > 0) { return }
+    else { clickFrames = Math.floor(60/4) }
+
+    var pp = { x: 320, y: 240 }
+
+    if(mouse.x == pp.x && mouse.y == pp.y) { return }
+
+    var d = Math.sqrt( (pp.y - mouse.y) * (pp.y - mouse.y) + (pp.x - mouse.x) * (pp.x - mouse.x) )
+    var theta = Math.acos((mouse.x - pp.x) / d)
+
+    if(mouse.y < pp.y) {
+        theta = -theta
+    }
+
+    var x = (pX - room.x + 320) / (room.map.width() * room.map.cellL())
+    var y = (pY - room.y + 240) / (room.map.height() * room.map.cellL())
+    room.bullets.push(new Bllt(x, y, theta))
+}
+
+
 var ticks = 0
 function loop() {
     var backCtx = buffer.getContext('2d')
@@ -126,6 +150,7 @@ function loop() {
     backCtx.fillRect(0,0,680,480)
 
     if(clickFrames > 0) { --clickFrames }
+    loop_shooting(rooms[0])
 
     var speed = 5
     if(dup) {
