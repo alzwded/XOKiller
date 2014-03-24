@@ -151,7 +151,7 @@ function Room(seed, x, y) {
 
         var map = this.map
         this.enemies.forEach(function(enem) {
-            enem.loop(x, y, map)
+            enem.loop(x, y, r)
         })
 
         this.enemies.removeIf(function(enem) {

@@ -69,7 +69,8 @@ function Enem(type, x, y) {
     }
     this.corr = function() { return (0.7/80)/0.7 }
     this.speed = function() { return 0.4/80 }
-    this.loop = function(x, y, map) {
+    this.loop = function(x, y, room) {
+        var map = room.map
         var ly = y - this.y
         var lx = x - this.x
         var d = Math.sqrt( ly * ly + lx * lx)
@@ -83,47 +84,47 @@ function Enem(type, x, y) {
         var yCell = enem_cell(newY, map.height())
         if(xCell < 0) {
             // check adjacent(2) and transfer if possible
-            if(enem_can(map.adjacent[2], xCell + map.adjacent[2].width(), yCell)) {
+            if(enem_can(room.adjacent[2].map, xCell + map.width(), yCell)) {
                 this.x = newX
                 this.y = newY
-                transfers.push(new Transfer(this, map.enemies, map.adjacent[2].enemies, 1.0, 0.0))
-            } else if(enem_can(map.adjacent[2], xCell + map.adjacent[2].width(), enem_cell(this.y, map.height()))) {
+                transfers.push(new Transfer(this, room.enemies, room.adjacent[2].enemies, 1.0, 0.0))
+            } else if(enem_can(room.adjacent[2].map, xCell + map.width(), enem_cell(this.y, map.height()))) {
                 this.x = newX
-                transfers.push(new Transfer(this, map.enemies, map.adjacent[2].enemies, 1.0, 0.0))
+                transfers.push(new Transfer(this, room.enemies, room.adjacent[2].enemies, 1.0, 0.0))
             }
         }
         if(yCell < 0) {
             // check adjacent(1) and transfer if possible
-            if(enem_can(map.adjacent[1], xCell, yCell + map.adjacent[1].height())) {
+            if(enem_can(room.adjacent[1].map, xCell, yCell + map.height())) {
                 
                 this.x = newX
                 this.y = newY
-                transfers.push(new Transfer(this, map.enemies, map.adjacent[1].enemies, 0.0, 1.0))
-            } else if(enem_can(map.adjacent[1], enem_cell(this.x, map.adjacent[1].width()), newY)) {
+                transfers.push(new Transfer(this, room.enemies, room.adjacent[1].enemies, 0.0, 1.0))
+            } else if(enem_can(room.adjacent[1].map, enem_cell(this.x, map.width()), newY)) {
                 this.y = newY
-                transfers.push(new Transfer(this, map.enemies, map.adjacent[1].enemies, 0.0, 1.0))
+                transfers.push(new Transfer(this, room.enemies, room.adjacent[1].enemies, 0.0, 1.0))
             }
         }
         if(xCell >= map.width()) {
             // check adjacent (0) and transfer if possible
-            if(enem_can(map.adjacent[0], xCell - map.adjacent[0].width(), yCell)) {
+            if(enem_can(room.adjacent[0].map, xCell - map.width(), yCell)) {
                 this.x = newX
                 this.y = newY
-                transfers.push(new Transfer(this, map.enemies, map.adjacent[0].enemies, -1.0, 0.0))
-            } else if(enem_can(map.adjacent[0], xCell - map.adjacent[0].width(), enem_cell(this.y, map.adjacent[0].height()))) {
+                transfers.push(new Transfer(this, room.enemies, room.adjacent[0].enemies, -1.0, 0.0))
+            } else if(enem_can(room.adjacent[0].map, xCell - map.width(), enem_cell(this.y, map.height()))) {
                 this.x = newX
-                transfers.push(new Transfer(this, map.enemies, map.adjacent[0].enemies, -1.0, 0.0))
+                transfers.push(new Transfer(this, room.enemies, room.adjacent[0].enemies, -1.0, 0.0))
             }
         }
         if(yCell >= map.height()) {
             // check adjacent (3) and transfer if possible
-            if(enem_can(map.adjacent[3], xCell, yCell - map.adjacent[3].height())) {
+            if(enem_can(room.adjacent[3].map, xCell, yCell - map.height())) {
                 this.x = newX
                 this.y = newY
-                transfers.push(new Transfer(this, map.enemies, map.adjacent[3].enemies, 0.0, -1.0))
-            } else if(enem_can(map.adjacent[3], enem_cell(this.x, map.adjacent[3].width()), yCell - map.adjacent[3].height())) {
+                transfers.push(new Transfer(this, room.enemies, room.adjacent[3].enemies, 0.0, -1.0))
+            } else if(enem_can(room.adjacent[3].map, enem_cell(this.x, map.width()), yCell - map.height())) {
                 this.y = newY
-                transfers.push(new Transfer(this, map.enemies, map.adjacent[3].enemies, 0.0, -1.0))
+                transfers.push(new Transfer(this, room.enemies, room.adjacent[3].enemies, 0.0, -1.0))
             }
         }
 

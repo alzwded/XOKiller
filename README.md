@@ -23,9 +23,10 @@ TODO
 * lives system
 * ~~spawn point~~
 * bullets
-  - PC bullets firing & mouse input
+  - ~~PC bullets firing & mouse input~~
+  - ~~track room bullets are in~~
   - X and BOSS bullets
 * input
-  - keyboard/mouse
+  - ~~keyboard/mouse~~
   - gamepad A
   - gamepad B

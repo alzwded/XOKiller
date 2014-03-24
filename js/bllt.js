@@ -16,16 +16,18 @@ function Bllt(x, y, theta) {
     this.x = x
     this.y = y
     this.theta = theta
-    this.hp = 50
+    this.getInitHP = function() { return 50 }
+    this.hp = this.getInitHP()
     this.width = 1
     this.speed = 0.9/80
-    this.getDamage = function() { return 6 }
+    this.getDamage = function() { return 4.5 }
     this.getDecrement = function() { return 3 }
     this.getMaxWidth = function() { return 80 }
     this.getNumIncreaseFrames = function() { return 24 }
     this.color = "#F0F0E0"
 
     var self = this
+    this.getWallPenalty = function() { return self.getInitHP() / 2 }
     this.loop = function(room) {
         --self.hp
         if(self.width < self.getMaxWidth()) {
@@ -52,6 +54,26 @@ function Bllt(x, y, theta) {
                 self.hp -= self.getDecrement()
             }
         })
+
+        var xCell = enem_cell(newX, room.map.width())
+        var yCell = enem_cell(newY, room.map.height())
+        if(!enem_can(room.map, xCell, yCell)) {
+            self.hp -= self.getWallPenalty()
+        }
+
+        if(xCell < 0 &&
+                enem_can(room.adjacent[2], xCell + room.map.width(), yCell)) {
+            transfers.push(new Transfer(self, room.bullets, room.adjacent[2].bullets))
+        } else if(yCell < 0 &&
+                enem_can(room.adjacent[1], xCell, yCell + room.map.height())) {
+            transfers.push(new Transfer(self, room.bullets, room.adjacent[1].bullets))
+        } else if(xCell > room.map.width() &&
+                enem_can(room.adjacent[0], xCell - room.map.width(), yCell)) {
+            transfers.push(new Transfer(self, room.bullets, room.adjacent[0].bullets))
+        } else if(yCell > room.map.height() &&
+                enem_can(room.adjacent[3], xCell, yCell - room.map.height())) {
+            transfers.push(new Transfer(self, room.bullets, room.adjacent[3].bullets))
+        }
 
         self.x = newX
         self.y = newY
