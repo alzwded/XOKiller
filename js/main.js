@@ -5,15 +5,18 @@ var rooms
 var pX, pY
 var dup, ddown, dleft, dright
 var hit = false
+var clickFrames
 
 function reset() {
     hit = false
+    clickFrames = 0
 
     pX = 90
     pY = 110
 
     rooms = new Array()
     rooms[0] = new Room(0, 100, 50)
+    //rooms[0].map.spawns = new Array()
 
     var enemies = new Array()
     //enemies[0] = new Enem('O', 0.2, 0.2)
@@ -25,6 +28,9 @@ function reset() {
     //enemies[200] = new Enem('O', 0.6, 0.2)
     //enemies[201] = new Enem('O', 1.0, 1.0)
     //enemies[201].loop = function() {}
+    // THE TEST ENEMY!
+    //enemies[0] = new Enem('O', -0.2, 0.2)
+    //enemies[0].loop = function() {}
 
     rooms[0].enemies = enemies
 }
@@ -44,6 +50,32 @@ function initCanvas() {
 
     var c = document.getElementById("surface")
     ctx = c.getContext("2d")
+
+    c.onclick = function(e) {
+        e.preventDefault()
+
+        if(clickFrames > 0) { return }
+        else { clickFrames = 30 }
+
+        var mouse = {
+            x: e.offsetX,//e.pageX - c.offsetLeft,
+            y: e.offsetY,//e.pageY - c.offsetTop,
+        }
+        var pp = { x: 320, y: 240 }
+
+        if(mouse.x == pp.x && mouse.y == pp.y) { return }
+
+        var d = Math.sqrt( (pp.y - mouse.y) * (pp.y - mouse.y) + (pp.x - mouse.x) * (pp.x - mouse.x) )
+        var theta = Math.acos((mouse.x - pp.x) / d)
+
+        if(mouse.y < pp.y) {
+            theta = -theta
+        }
+
+        var x = (pX - rooms[0].x + 320) / (rooms[0].map.width() * rooms[0].map.cellL())
+        var y = (pY - rooms[0].y + 240) / (rooms[0].map.height() * rooms[0].map.cellL())
+        rooms[0].bullets.push(new Bllt(x, y, theta))
+    }
 
     buffer = document.createElement('canvas')
     buffer.width = c.width
@@ -92,6 +124,8 @@ function loop() {
     var backCtx = buffer.getContext('2d')
     backCtx.fillStyle = "#000000"
     backCtx.fillRect(0,0,680,480)
+
+    if(clickFrames > 0) { --clickFrames }
 
     var speed = 5
     if(dup) {

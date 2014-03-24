@@ -68,6 +68,7 @@ function Room(seed, x, y) {
     this.adjacent = new Array(null, null, null, null)
     this.x = x
     this.y = y
+    this.bullets = new Array()
 
     this.draw = function(ctx, x, y) {
         ctx.strokeStyle = "cyan"
@@ -118,6 +119,11 @@ function Room(seed, x, y) {
             enem.draw(ctx, fx(enem.x), fy(enem.y))
         })
 
+        var self = this
+        self.bullets.forEach(function(bllt) {
+            bllt.draw(ctx, fx(bllt.x), fy(bllt.y))
+        })
+
     }
 
     this.loop = function(rx, ry) {
@@ -134,6 +140,14 @@ function Room(seed, x, y) {
         // if adjacent room, add or substract 1 depending on which one it is
         var x = (320 - rx) / (r.map.width() * r.map.cellL())
         var y = (240 - ry) / (r.map.height() * r.map.cellL())
+
+        this.bullets.forEach(function(bllt) {
+            bllt.loop(r)
+        })
+
+        this.bullets.removeIf(function(bllt) {
+            return bllt.hp <= 0
+        })
 
         var map = this.map
         this.enemies.forEach(function(enem) {

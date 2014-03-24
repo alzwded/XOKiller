@@ -1,12 +1,24 @@
 <html>
 <head>
     <title>XO Hell</title>
+    <script type="text/javascript" src="js/bllt.js"></script>
     <script type="text/javascript" src="js/enem.js"></script>
     <script type="text/javascript" src="js/room.js"></script>
     <script type="text/javascript" src="js/main.js"></script>
+    <style>
+image, canvas {
+    user-select: none;
+    -ms-user-select: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-user-drag: none;
+}
+    </style>
 </head>
 <body>
-    <canvas id="surface" width="640" height="480" style="border:1px solid #000000;" onclick="enemies[0].hp = -1">
+    <canvas id="surface" width="640" height="480" style="border:1px solid #000000;">
     </canvas>
     <script type="text/javascript">
 initCanvas()

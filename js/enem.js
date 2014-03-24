@@ -73,7 +73,7 @@ function Enem(type, x, y) {
         var ly = y - this.y
         var lx = x - this.x
         var d = Math.sqrt( ly * ly + lx * lx)
-        if(Math.abs(d) < 1.e-2) { hit = true; return }
+        if(this.hp > 0 && Math.abs(d) < 1.e-2) { hit = true; return }
         var cosA = lx / d
         var sinA = ly / d
         var corr = this.corr()
