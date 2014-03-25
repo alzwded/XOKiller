@@ -41,7 +41,7 @@ TODO
 What works
 ==========
 
-You can control your blip using WASD and aim/shoot with your mouse. You can run around 5 rooms being chased by mindless circles. If the circles get you, they eat you forever.
+You can control your blip using WASD and aim/shoot with your mouse. You can run around 5 rooms being chased by mindless circles. If the circles get you, they eat you forever. You can pause the game with the ESCape key.
 
 Attribution
 ===========
