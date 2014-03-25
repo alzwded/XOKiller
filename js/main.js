@@ -10,9 +10,17 @@ var mouse = {
     down: false,
 }
 var SFX = {
-    gun: false,
-    pop: false,
-    sizzle: false,
+    gun:  new Array(
+        new Audio('assets/gun.wav'),
+        new Audio('assets/gun.wav'),
+        new Audio('assets/gun.wav'),
+        new Audio('assets/gun.wav')),
+    pop: new Audio('assets/pop.wav'),
+    sizzle: new Array(
+        new Audio('assets/sizzle-short.wav'),
+        new Audio('assets/sizzle-short.wav'),
+        new Audio('assets/sizzle-short.wav'),
+        new Audio('assets/sizzle-short.wav')),
     rqSizzle: false,
     __iGun: 0,
     iGun: function() {
@@ -107,18 +115,6 @@ function initCanvas() {
     buffer = document.createElement('canvas')
     buffer.width = c.width
     buffer.height = c.height
-
-    SFX.gun = new Array(
-        new Audio('assets/gun.wav'),
-        new Audio('assets/gun.wav'),
-        new Audio('assets/gun.wav'),
-        new Audio('assets/gun.wav'))
-    SFX.pop = new Audio('assets/pop.wav')
-    SFX.sizzle = new Array(
-        new Audio('assets/sizzle-short.wav'),
-        new Audio('assets/sizzle-short.wav'),
-        new Audio('assets/sizzle-short.wav'),
-        new Audio('assets/sizzle-short.wav'))
 
     document.body.onkeydown = function(e) {
         switch(e.which) {
