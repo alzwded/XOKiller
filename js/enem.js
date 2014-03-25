@@ -1,7 +1,7 @@
-var enem_transfers = new Array()
+var transfers = new Array()
 
 function executeTransfers() {
-    enem_transfers.forEach(function(tsfr) {
+    transfers.forEach(function(tsfr) {
         tsfr.from.removeIf(function(elem) {
             return elem == tsfr.who
         });
@@ -10,7 +10,7 @@ function executeTransfers() {
         tsfr.who.y += tsfr.correctionY
     })
 
-    enem_transfers = new Array()
+    transfers = new Array()
 }
 
 function Transfer(who, from, to, correctionX, correctionY) {
@@ -93,9 +93,11 @@ function Enem(type, x, y) {
                 this.x = newX
                 this.y = newY
                 transfers.push(new Transfer(this, room.enemies, room.adjacent[2].enemies, 1.0, 0.0))
+                return
             } else if(enem_can(room.adjacent[2].map, xCell + map.width(), enem_cell(this.y, map.height()))) {
                 this.x = newX
                 transfers.push(new Transfer(this, room.enemies, room.adjacent[2].enemies, 1.0, 0.0))
+                return
             }
         }
         if(yCell < 0) {
@@ -105,9 +107,11 @@ function Enem(type, x, y) {
                 this.x = newX
                 this.y = newY
                 transfers.push(new Transfer(this, room.enemies, room.adjacent[1].enemies, 0.0, 1.0))
+                return
             } else if(enem_can(room.adjacent[1].map, enem_cell(this.x, map.width()), newY)) {
                 this.y = newY
                 transfers.push(new Transfer(this, room.enemies, room.adjacent[1].enemies, 0.0, 1.0))
+                return
             }
         }
         if(xCell >= map.width()) {
@@ -116,9 +120,11 @@ function Enem(type, x, y) {
                 this.x = newX
                 this.y = newY
                 transfers.push(new Transfer(this, room.enemies, room.adjacent[0].enemies, -1.0, 0.0))
+                return
             } else if(enem_can(room.adjacent[0].map, xCell - map.width(), enem_cell(this.y, map.height()))) {
                 this.x = newX
                 transfers.push(new Transfer(this, room.enemies, room.adjacent[0].enemies, -1.0, 0.0))
+                return
             }
         }
         if(yCell >= map.height()) {
@@ -127,9 +133,11 @@ function Enem(type, x, y) {
                 this.x = newX
                 this.y = newY
                 transfers.push(new Transfer(this, room.enemies, room.adjacent[3].enemies, 0.0, -1.0))
+                return
             } else if(enem_can(room.adjacent[3].map, enem_cell(this.x, map.width()), yCell - map.height())) {
                 this.y = newY
                 transfers.push(new Transfer(this, room.enemies, room.adjacent[3].enemies, 0.0, -1.0))
+                return
             }
         }
 

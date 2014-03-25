@@ -1,7 +1,8 @@
 var ctx
 var buffer
 //var enemies
-var rooms
+var room
+var spawnRoom
 var pX, pY
 var dup, ddown, dleft, dright
 var hit = false
@@ -37,8 +38,18 @@ function reset() {
     pX = 90
     pY = 110
 
-    rooms = new Array()
-    rooms[0] = new Room(0, 100, 50)
+    spawnRoom = new Room(0, 0, 0)
+    room = spawnRoom
+    var w = spawnRoom.map.width() * spawnRoom.map.cellL()
+    var h = spawnRoom.map.height() * spawnRoom.map.cellL()
+    room.adjacent[0] = new Room(1, w, 0)
+    room.adjacent[0].adjacent[2] = spawnRoom
+    room.adjacent[1] = new Room(2, 0, -h)
+    room.adjacent[1].adjacent[3] = spawnRoom
+    room.adjacent[2] = new Room(3, -w, 0)
+    room.adjacent[2].adjacent[0] = spawnRoom
+    room.adjacent[3] = new Room(4, 0, h)
+    room.adjacent[3].adjacent[1] = spawnRoom
     //rooms[0].map.spawns = new Array()
 
     var enemies = new Array()
@@ -55,7 +66,7 @@ function reset() {
     //enemies[0] = new Enem('O', -0.2, 0.2)
     //enemies[0].loop = function() {}
 
-    rooms[0].enemies = enemies
+    room.enemies = enemies
 }
 
 function initCanvas() {
@@ -177,6 +188,140 @@ function loop_shooting(room) {
     room.bullets.push(new Bllt(x, y, theta))
 }
 
+function processKeyboard(speed) {
+    var newP = {
+        x: 0,
+        y: 0,
+    }
+
+    if(dup) {
+        if(ddown) {
+        } else if(dleft) {
+            newP.y = -speed * Math.sin(Math.PI / 4)
+            newP.x = -speed * Math.cos(Math.PI / 4)
+        } else if(dright) {
+            newP.y = -speed * Math.sin(Math.PI / 4)
+            newP.x = +speed * Math.cos(Math.PI / 4)
+        } else {
+            newP.y = -speed
+        }
+    } else if(ddown) {
+        if(dup) {
+        } else if(dleft) {
+            newP.y = +speed * Math.sin(Math.PI / 4)
+            newP.x = -speed * Math.cos(Math.PI / 4)
+        } else if(dright) {
+            newP.y = +speed * Math.sin(Math.PI / 4)
+            newP.x = +speed * Math.cos(Math.PI / 4)
+        } else {
+            newP.y = +speed
+        }
+    } else if(dleft) {
+        if(dright) {
+        } else {
+            newP.x = -speed
+        }
+    } else if(dright) {
+        if(dleft) {
+        } else {
+            newP.x = +speed
+        }
+    }
+
+    return newP
+}
+
+function translateToRoomCoordinates(newP) {
+    return {
+        x: (newP.x + pX - room.x + 320) / (room.map.width() * room.map.cellL()),
+        y: (newP.y + pY - room.y + 240) / (room.map.height() * room.map.cellL()),
+    }
+}
+
+function tryMovePC(newP, p, oldP) {
+    var xCell = enem_cell(p.x, room.map.width())
+    var yCell = enem_cell(p.y, room.map.height())
+    var oldXCell = enem_cell(oldP.x, room.map.width())
+    var oldYCell = enem_cell(oldP.y, room.map.height())
+
+    if(xCell < 0 && room.adjacent[2]) {
+        if(enem_can(room.adjacent[2].map, xCell + room.adjacent[2].map.width(), yCell)) {
+            pX += newP.x
+            pY += newP.y
+            room = room.adjacent[2]
+            return true
+        } else if(enem_can(room.adjacent[2].map, xCell + room.adjacent[2].map.width(), oldYCell)) {
+            pX += newP.x
+            room = room.adjacent[2]
+            return true
+        }
+    } else if(xCell >= room.map.width() && room.adjacent[0]) {
+        if(enem_can(room.adjacent[0].map, xCell - room.map.width(), yCell)) {
+            pX += newP.x
+            pY += newP.y
+            room = room.adjacent[0]
+            return true
+        } else if(enem_can(room.adjacent[0].map, xCell - room.map.width(), oldYCell)) {
+            pX += newP.x
+            room = room.adjacent[0]
+            return true
+        }
+    } else if(yCell < 0 && room.adjacent[1]) {
+        if(enem_can(room.adjacent[1].map, xCell, yCell + room.adjacent[1].map.height())) {
+            pX += newP.x
+            pY += newP.y
+            room = room.adjacent[1]
+            return true
+        } else if(enem_can(room.adjacent[1].map, oldXCell, yCell + room.adjacent[1].map.height())) {
+            pY += newP.y
+            room = room.adjacent[1]
+            return true
+        }
+    } else if(yCell >= room.map.height() && room.adjacent[3]) {
+        if(enem_can(room.adjacent[3].map, xCell, yCell - room.map.height())) {
+            pX += newP.x
+            pY += newP.y
+            room = room.adjacent[3]
+            return true
+        } else if(enem_can(room.adjacent[3].map, oldXCell, yCell - room.map.height())) {
+            pY += newP.y
+            room = room.adjacent[3]
+            return true
+        }
+    }
+
+    if(enem_can(room.map, xCell, yCell)) {
+        pX += newP.x
+        pY += newP.y
+        return true
+    } else if(enem_can(room.map, oldXCell, yCell)) {
+        pY += newP.y
+        return true
+    } else if(enem_can(room.map, xCell, oldYCell)) {
+        pX += newP.x
+        return true
+    }
+    return false
+}
+
+function movePC() {
+    var speed = 5
+    var newP = processKeyboard(speed)
+    var pInRoom = translateToRoomCoordinates(newP)
+    var oldP = {
+        x: (pX - room.x + 320) / (room.map.width() * room.map.cellL()),
+        y: (pY - room.y + 240) / (room.map.height() * room.map.cellL()),
+    }
+    if(!tryMovePC(newP, pInRoom, oldP)) {
+        newP = processKeyboard(speed / 2)
+        pInRoom = translateToRoomCoordinates(newP)
+        if(!tryMovePC(newP, pInRoom, oldP)) {
+            newP = processKeyboard(speed / 4)
+            pInRoom = translateToRoomCoordinates(newP)
+            tryMovePC(newP, pInRoom, oldP)
+        }
+    }
+}
 
 var ticks = 0
 function loop() {
@@ -186,50 +331,23 @@ function loop() {
     backCtx.fillRect(0,0,680,480)
 
     if(clickFrames > 0) { --clickFrames }
-    loop_shooting(rooms[0])
+    loop_shooting(room)
 
-    var speed = 5
-    if(dup) {
-        if(ddown) {
-        } else if(dleft) {
-            pY -= speed * Math.sin(Math.PI / 4)
-            pX -= speed * Math.cos(Math.PI / 4)
-        } else if(dright) {
-            pY -= speed * Math.sin(Math.PI / 4)
-            pX += speed * Math.cos(Math.PI / 4)
-        } else {
-            pY -= speed
-        }
-    } else if(ddown) {
-        if(dup) {
-        } else if(dleft) {
-            pY += speed * Math.sin(Math.PI / 4)
-            pX -= speed * Math.cos(Math.PI / 4)
-        } else if(dright) {
-            pY += speed * Math.sin(Math.PI / 4)
-            pX += speed * Math.cos(Math.PI / 4)
-        } else {
-            pY += speed
-        }
-    } else if(dleft) {
-        if(dright) {
-        } else {
-            pX -= speed
-        }
-    } else if(dright) {
-        if(dleft) {
-        } else {
-            pX += speed
-        }
-    }
+    movePC()
 
-    rooms.forEach(function(r) {
-        var rx = r.x - pX
-        var ry = r.y - pY
-        r.loop(rx, ry)
-        r.draw(backCtx, rx, ry)
-
+    var rx = room.x - pX
+    var ry = room.y - pY
+    room.loop(rx, ry)
+    room.draw(backCtx, rx, ry)
+    room.adjacent.forEach(function(r) {
+        if(!r) { return }
+        var arx = r.x - pX
+        var ary = r.y - pY
+        r.loop(arx, ary)
+        r.draw(backCtx, arx, ary)
     })
+
+    executeTransfers()
 
     if(SFX.rqSizzle) {
         SFX.sizzle[SFX.iSizzle()].play()
@@ -256,8 +374,6 @@ function loop() {
         backCtx.fillStyle = "cyan"
         backCtx.fillRect(l, 0, 640 - l, 2)
     }
-
-    executeTransfers()
 
     ctx.drawImage(buffer, 0, 0)
 

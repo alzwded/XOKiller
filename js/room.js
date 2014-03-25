@@ -6,6 +6,7 @@ function Spwn(num, x, y, type) {
     this.y = y
     this.type = type
     this.loop = function(room) {
+        return
         ++this.ticks
         if(this.num == 0) {
             this.loop = function() {}
@@ -27,7 +28,7 @@ function Spwn(num, x, y, type) {
 }
 
 function Map(seed) {
-    this.exits = new Array(null, null, null, null)
+    this.exits = new Array(null, null, null, null) // used in map generation to inform which exits are possible
     this.spawns = new Array()
     this.layout = new Array()
     this.width = function() { return 36 }
@@ -42,21 +43,52 @@ function Map(seed) {
             }
         }
     }
-    this.layout[18 * this.width() + 11] = true
-    this.layout[17 * this.width() + 11] = true
-    this.layout[16 * this.width() + 11] = true
-    this.layout[15 * this.width() + 11] = true
-    this.layout[19 * this.width() +  7] = true
-    this.layout[19 * this.width() +  8] = true
-    this.layout[19 * this.width() +  9] = true
-    this.layout[19 * this.width() + 11] = true
-    this.layout[19 * this.width() + 12] = true
-    this.layout[19 * this.width() + 13] = true
-    this.layout[ 7 * this.width() + 10] = true
-    this.layout[ 7 * this.width() + 11] = true
-    this.layout[ 9 * this.width() + 12] = true
-    this.layout[10 * this.width() + 12] = true
-    this.layout[10 * this.width() + 11] = true
+    if(seed == 0) {
+        this.layout[18 * this.width() + 11] = true
+        this.layout[17 * this.width() + 11] = true
+        this.layout[16 * this.width() + 11] = true
+        this.layout[15 * this.width() + 11] = true
+        this.layout[19 * this.width() +  7] = true
+        this.layout[19 * this.width() +  8] = true
+        this.layout[19 * this.width() +  9] = true
+        this.layout[19 * this.width() + 11] = true
+        this.layout[19 * this.width() + 12] = true
+        this.layout[19 * this.width() + 13] = true
+        this.layout[ 7 * this.width() + 10] = true
+        this.layout[ 7 * this.width() + 11] = true
+        this.layout[ 9 * this.width() + 12] = true
+        this.layout[10 * this.width() + 12] = true
+        this.layout[10 * this.width() + 11] = true
+        for(var i = 12; i < this.width() - 12; ++i) {
+            this.layout[i * this.width() + 0] = false
+            this.layout[i * this.width() + this.width() - 1] = false
+        }
+        for(var j = 12; j < this.height() - 12; ++j) {
+            this.layout[0 + j] = false
+            this.layout[this.width()*(this.width() - 1) + j] = false
+        }
+    }
+    if(seed == 1) {
+        var i = 0
+        for(var j = 12; j < this.width() - 12; ++j) {
+            this.layout[i * this.width() + j] = false
+        }
+    } else if(seed == 2) {
+        var j = this.height() - 1
+        for(var i = 12; i < this.width() - 12; ++i) {
+            this.layout[i * this.width() + j] = false
+        }
+    } else if(seed == 3) {
+        var i = this.width() - 1
+        for(var j = 12; j < this.height() - 12; ++j) {
+            this.layout[i * this.width() + j] = false
+        }
+    } else if(seed == 4) {
+        var j = 0
+        for(var i = 12; i < this.width() - 12; ++i) {
+            this.layout[i * this.width() + j] = false
+        }
+    }
 
     this.spawns.push(new Spwn(100, 0.055, 0.23, 'O'))
     this.spawns.push(new Spwn(100, 0.6, 0.2, 'O'))
