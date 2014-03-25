@@ -32,7 +32,7 @@ function reset() {
     SFX.pop.play()
     hit = false
 
-    PC = new Plyr(90, 100)
+    PC = new Plyr(360, 360)
 
     spawnRoom = new Room(0, 0, 0)
     PC.room = spawnRoom

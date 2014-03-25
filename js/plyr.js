@@ -3,8 +3,8 @@ function Plyr(x, y) {
     self.room = null
     self.clickFrames = 0
     self.pos = {
-        x: 90,
-        y: 110,
+        x: x - 320,
+        y: y - 240,
     }
     self.translateToRoomCoordinates = function(newP) {
         return {
