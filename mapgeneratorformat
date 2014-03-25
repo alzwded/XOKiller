@@ -1,0 +1,88 @@
+<BEGIN EXAMPLE>
+yes no yes no
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@               T                 @
+@                                 @
+@               @@                @
+@               @@                @
+@               @@                @
+@               @@                @
+@        O      @@      O         @
+@      @   @    @@    @   @       @
+@      @@@@@    @@    @@@@@       @
+@               @@                @
+@               @@                @
+@               @@                @
+@               @@         @      @
+@    @@                    @      @
+@    @                     @      @
+@    @                     @      @
+@    @      @@@@@@@@@      @      @
+@    @      @@@@@@@@@      @      @
+@    @                            @
+@    @      @@@@@@@@@             @
+@    @@     @@@@@@@@@             @
+@                                 @
+@                                 @
+@                                 @
+@                                 @
+@    @@@                 @@@      @
+@    @                     @      @
+@    @                     @      @
+@          @@@@@@@@@@@@           @
+@                                 @
+@                X                @
+@                                 @
+@                                 @
+@                T                @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+<END EXAMPLE>
+yes     no      yes     no  => exits
+E       N       W       S   
+@ => wall
+O => O spawn point
+X => X spawn point
+T => treasure
+
+Map generator high level design:
+
+assets/map.idx:
+    map.1       => file names of additional maps
+    map.2
+    ...
+    map.n
+
+init:
+    XMLHttpRequest assets/map.idx
+    XMLHttpRequest the hell out of all of the files
+    group them by exits in pools (E-entrance, N-entrance, W-entrance, S-entrance)
+    foreach line in assets/map.idx:
+        parse assets/line
+        put it in respective pool
+
+generate_map:
+    our c = 100
+    our goalSet = false
+    pick one seed at random
+    spawnRoom = new Room(seed)
+    generate_map_rec(spawnRoom)
+    return spawnRoom
+
+generate_map_rec(r)
+    c--
+    foreach exit in r.exits
+        if(!exit) continue # exit available; it may not exist or it may have been taken already by the algorithm
+        if c < 0
+            r.seal_exit(exit)
+            continue
+        seed = pool[exit].pick_random()
+        r.adjacent[exit] = new Room(seed)
+        r.adjacent[exit].adjacent[~exit] = r # back link
+        r.adjacent[exit].exits[exit] = false # taken
+        generate_map_rec(r.adjacent[exit]) # recurse
+    if !goalSet && rand() % 100 == 0
+        r.setGoal(true)
+        gloaSet = true
+
+seal_exit(exit)
+    fill said border with solids

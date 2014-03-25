@@ -22,6 +22,7 @@ TODO
   - lives system
   - Goal / victory conditions, floor counter
   - points counter, time counter
+  - bonus tokens
 * ~~spawn point~~
 * bullets
   - ~~PC bullets firing & mouse input~~
