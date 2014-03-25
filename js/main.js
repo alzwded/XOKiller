@@ -27,6 +27,7 @@ var SFX = {
         return Math.floor(this.__iSizzle / 30)
     }
 }
+var running = true
 
 function reset() {
     SFX.pop.play()
@@ -142,6 +143,8 @@ function initCanvas() {
         case 87: // w
             dup = false
             break
+        case 27:
+            running = !running
         }
     }
 
@@ -177,6 +180,7 @@ function loop_shooting(room) {
 
 var ticks = 0
 function loop() {
+    if(!running) { return }
     var backCtx = buffer.getContext('2d')
     backCtx.fillStyle = "#000000"
     backCtx.fillRect(0,0,680,480)
