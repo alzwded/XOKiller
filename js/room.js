@@ -6,7 +6,6 @@ function Spwn(num, x, y, type) {
     this.y = y
     this.type = type
     this.loop = function(room) {
-        return
         ++this.ticks
         if(this.num == 0) {
             this.loop = function() {}
