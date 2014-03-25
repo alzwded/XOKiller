@@ -77,8 +77,11 @@ function maps_new() {
     maps_goalSet = false
     var roomType = 
     var spawnRoom = new Room(Math.floor(Math.random()) % maps.all.length(), 0, 0)
-    maps_generateMapRec(spawnRoom, false)
-    return spawnRoom
+    var numRooms = maps_generateMapRec(spawnRoom, false)
+    return {
+        spawnRoom: spawnRoom,
+        numRooms: numRooms,
+    }
 }
 
 function maps_offsetFor(i) {
@@ -107,12 +110,15 @@ function maps_offsetFor(i) {
 }
 
 function maps_generateMapRec(r, canBeGoalRoom) {
-    if(canBeGoalRoom && !maps_goalSet && Math.floor(Math.random()) % 100 == 0) {
+    var num = 1
+    if(maps_c > 0) { --maps_c }
+    if(canBeGoalRoom && 
+            maps_c > 0 ||
+            (!maps_goalSet && Math.floor(Math.random()) % 100 == 0)) {
        r.makeGoalRoom()
        maps_goalSet = true
-       return
+       return num
     }
-    if(maps_c > 0) { --maps_c }
     for(var i = 0; i < 4; ++i) {
         if(!r.map.exits[i]) { continue }
         if(maps_c <= 0) {
@@ -126,6 +132,7 @@ function maps_generateMapRec(r, canBeGoalRoom) {
         r.adjacent[i].adjacent[j] = r
         r.adjacent[i].map.exits[j] = false
         r.map.exits[j] = false
-        generate_map_rec(r.adjacent[i], true)
+        num += generate_map_rec(r.adjacent[i], true)
     }
+    return num
 }
