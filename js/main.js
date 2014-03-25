@@ -1,12 +1,9 @@
 var ctx
 var buffer
 //var enemies
-var room
 var spawnRoom
-var pX, pY
 var dup, ddown, dleft, dright
 var hit = false
-var clickFrames
 var mouse = {
     x: 0,
     y: 0,
@@ -29,30 +26,29 @@ var SFX = {
     }
 }
 var running = true
+var PC
 
 function reset() {
     SFX.pop.play()
     hit = false
-    clickFrames = 0
 
-    pX = 90
-    pY = 110
+    PC = new Plyr(90, 100)
 
     spawnRoom = new Room(0, 0, 0)
-    room = spawnRoom
+    PC.room = spawnRoom
     var w = spawnRoom.map.width() * spawnRoom.map.cellL()
     var h = spawnRoom.map.height() * spawnRoom.map.cellL()
-    room.adjacent[0] = new Room(1, w, 0)
-    room.adjacent[0].adjacent[2] = spawnRoom
-    room.adjacent[1] = new Room(2, 0, -h)
-    room.adjacent[1].adjacent[3] = spawnRoom
-    room.adjacent[2] = new Room(3, -w, 0)
-    room.adjacent[2].adjacent[0] = spawnRoom
-    room.adjacent[3] = new Room(4, 0, h)
-    room.adjacent[3].adjacent[1] = spawnRoom
+    spawnRoom.adjacent[0] = new Room(1, w, 0)
+    spawnRoom.adjacent[0].adjacent[2] = spawnRoom
+    spawnRoom.adjacent[1] = new Room(2, 0, -h)
+    spawnRoom.adjacent[1].adjacent[3] = spawnRoom
+    spawnRoom.adjacent[2] = new Room(3, -w, 0)
+    spawnRoom.adjacent[2].adjacent[0] = spawnRoom
+    spawnRoom.adjacent[3] = new Room(4, 0, h)
+    spawnRoom.adjacent[3].adjacent[1] = spawnRoom
     //rooms[0].map.spawns = new Array()
 
-    var enemies = new Array()
+    //var enemies = new Array()
     //enemies[0] = new Enem('O', 0.2, 0.2)
     //enemies[1] = new Enem('O', 0.1, 0.2)
     //for(var k = 0; k < 200; ++k) {
@@ -66,7 +62,7 @@ function reset() {
     //enemies[0] = new Enem('O', -0.2, 0.2)
     //enemies[0].loop = function() {}
 
-    room.enemies = enemies
+    //room.enemies = enemies
 }
 
 function initCanvas() {
@@ -164,28 +160,10 @@ function initCanvas() {
     setInterval(loop, 17)
 }
 
-function loop_shooting(room) {
-    if(!mouse.down) { return }
-    if(clickFrames > 0) { return }
-    else {
-        SFX.gun[SFX.iGun()].play()
-        clickFrames = Math.floor(60/4)
-    }
-
-    var pp = { x: 320, y: 240 }
-
-    if(mouse.x == pp.x && mouse.y == pp.y) { return }
-
-    var d = Math.sqrt( (pp.y - mouse.y) * (pp.y - mouse.y) + (pp.x - mouse.x) * (pp.x - mouse.x) )
-    var theta = Math.acos((mouse.x - pp.x) / d)
-
-    if(mouse.y < pp.y) {
-        theta = -theta
-    }
-
-    var x = (pX - room.x + 320) / (room.map.width() * room.map.cellL())
-    var y = (pY - room.y + 240) / (room.map.height() * room.map.cellL())
-    room.bullets.push(new Bllt(x, y, theta))
+function processInput(speed) {
+    // TODO this will be something like an average of
+    //      all non-zero inputs. Or based on selection
+    return processKeyboard(speed)
 }
 
 function processKeyboard(speed) {
@@ -231,98 +209,6 @@ function processKeyboard(speed) {
     return newP
 }
 
-function translateToRoomCoordinates(newP) {
-    return {
-        x: (newP.x + pX - room.x + 320) / (room.map.width() * room.map.cellL()),
-        y: (newP.y + pY - room.y + 240) / (room.map.height() * room.map.cellL()),
-    }
-}
-
-function tryMovePC(newP, p, oldP) {
-    var xCell = enem_cell(p.x, room.map.width())
-    var yCell = enem_cell(p.y, room.map.height())
-    var oldXCell = enem_cell(oldP.x, room.map.width())
-    var oldYCell = enem_cell(oldP.y, room.map.height())
-
-    if(xCell < 0 && room.adjacent[2]) {
-        if(enem_can(room.adjacent[2].map, xCell + room.adjacent[2].map.width(), yCell)) {
-            pX += newP.x
-            pY += newP.y
-            room = room.adjacent[2]
-            return true
-        } else if(enem_can(room.adjacent[2].map, xCell + room.adjacent[2].map.width(), oldYCell)) {
-            pX += newP.x
-            room = room.adjacent[2]
-            return true
-        }
-    } else if(xCell >= room.map.width() && room.adjacent[0]) {
-        if(enem_can(room.adjacent[0].map, xCell - room.map.width(), yCell)) {
-            pX += newP.x
-            pY += newP.y
-            room = room.adjacent[0]
-            return true
-        } else if(enem_can(room.adjacent[0].map, xCell - room.map.width(), oldYCell)) {
-            pX += newP.x
-            room = room.adjacent[0]
-            return true
-        }
-    } else if(yCell < 0 && room.adjacent[1]) {
-        if(enem_can(room.adjacent[1].map, xCell, yCell + room.adjacent[1].map.height())) {
-            pX += newP.x
-            pY += newP.y
-            room = room.adjacent[1]
-            return true
-        } else if(enem_can(room.adjacent[1].map, oldXCell, yCell + room.adjacent[1].map.height())) {
-            pY += newP.y
-            room = room.adjacent[1]
-            return true
-        }
-    } else if(yCell >= room.map.height() && room.adjacent[3]) {
-        if(enem_can(room.adjacent[3].map, xCell, yCell - room.map.height())) {
-            pX += newP.x
-            pY += newP.y
-            room = room.adjacent[3]
-            return true
-        } else if(enem_can(room.adjacent[3].map, oldXCell, yCell - room.map.height())) {
-            pY += newP.y
-            room = room.adjacent[3]
-            return true
-        }
-    }
-
-    if(enem_can(room.map, xCell, yCell)) {
-        pX += newP.x
-        pY += newP.y
-        return true
-    } else if(enem_can(room.map, oldXCell, yCell)) {
-        pY += newP.y
-        return true
-    } else if(enem_can(room.map, xCell, oldYCell)) {
-        pX += newP.x
-        return true
-    }
-    return false
-}
-
-function movePC() {
-    var speed = 5
-    var newP = processKeyboard(speed)
-    var pInRoom = translateToRoomCoordinates(newP)
-    var oldP = {
-        x: (pX - room.x + 320) / (room.map.width() * room.map.cellL()),
-        y: (pY - room.y + 240) / (room.map.height() * room.map.cellL()),
-    }
-    if(!tryMovePC(newP, pInRoom, oldP)) {
-        newP = processKeyboard(speed / 2)
-        pInRoom = translateToRoomCoordinates(newP)
-        if(!tryMovePC(newP, pInRoom, oldP)) {
-            newP = processKeyboard(speed / 4)
-            pInRoom = translateToRoomCoordinates(newP)
-            tryMovePC(newP, pInRoom, oldP)
-        }
-    }
-}
-
 var ticks = 0
 function loop() {
     if(!running) { return }
@@ -330,19 +216,17 @@ function loop() {
     backCtx.fillStyle = "#000000"
     backCtx.fillRect(0,0,680,480)
 
-    if(clickFrames > 0) { --clickFrames }
-    loop_shooting(room)
+    PC.loopShooting()
+    PC.move()
 
-    movePC()
-
-    var rx = room.x - pX
-    var ry = room.y - pY
-    room.loop(rx, ry)
-    room.draw(backCtx, rx, ry)
-    room.adjacent.forEach(function(r) {
+    var rx = PC.room.x - PC.pos.x
+    var ry = PC.room.y - PC.pos.y
+    PC.room.loop(rx, ry)
+    PC.room.draw(backCtx, rx, ry)
+    PC.room.adjacent.forEach(function(r) {
         if(!r) { return }
-        var arx = r.x - pX
-        var ary = r.y - pY
+        var arx = r.x - PC.pos.x
+        var ary = r.y - PC.pos.y
         r.loop(arx, ary)
         r.draw(backCtx, arx, ary)
     })
