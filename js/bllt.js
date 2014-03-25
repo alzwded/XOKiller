@@ -68,10 +68,10 @@ function Bllt(x, y, theta) {
         } else if(yCell < 0 &&
                 enem_can(room.adjacent[1].map, xCell, yCell + room.map.height())) {
             transfers.push(new Transfer(self, room.bullets, room.adjacent[1].bullets, 0.0, 1.0))
-        } else if(xCell > room.map.width() &&
+        } else if(xCell >= room.map.width() &&
                 enem_can(room.adjacent[0].map, xCell - room.map.width(), yCell)) {
             transfers.push(new Transfer(self, room.bullets, room.adjacent[0].bullets, -1.0, 0.0))
-        } else if(yCell > room.map.height() &&
+        } else if(yCell >= room.map.height() &&
                 enem_can(room.adjacent[3].map, xCell, yCell - room.map.height())) {
             transfers.push(new Transfer(self, room.bullets, room.adjacent[3].bullets, 0.0, -1.0))
         }
