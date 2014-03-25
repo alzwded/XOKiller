@@ -11,8 +11,25 @@ var mouse = {
     y: 0,
     down: false,
 }
+var SFX = {
+    gun: false,
+    pop: false,
+    sizzle: false,
+    rqSizzle: false,
+    __iGun: 0,
+    iGun: function() {
+        this.__iGun = (this.__iGun + 1) % 4
+        return this.__iGun
+    },
+    __iSizzle: 0,
+    iSizzle: function() {
+        this.__iSizzle = (this.__iSizzle + 1) % (4 * 30)
+        return Math.floor(this.__iSizzle / 30)
+    }
+}
 
 function reset() {
+    SFX.pop.play()
     hit = false
     clickFrames = 0
 
@@ -83,6 +100,18 @@ function initCanvas() {
     buffer.width = c.width
     buffer.height = c.height
 
+    SFX.gun = new Array(
+        new Audio('assets/gun.wav'),
+        new Audio('assets/gun.wav'),
+        new Audio('assets/gun.wav'),
+        new Audio('assets/gun.wav'))
+    SFX.pop = new Audio('assets/pop.wav')
+    SFX.sizzle = new Array(
+        new Audio('assets/sizzle-short.wav'),
+        new Audio('assets/sizzle-short.wav'),
+        new Audio('assets/sizzle-short.wav'),
+        new Audio('assets/sizzle-short.wav'))
+
     document.body.onkeydown = function(e) {
         switch(e.which) {
         case 65: // a
@@ -124,7 +153,10 @@ function initCanvas() {
 function loop_shooting(room) {
     if(!mouse.down) { return }
     if(clickFrames > 0) { return }
-    else { clickFrames = Math.floor(60/4) }
+    else {
+        SFX.gun[SFX.iGun()].play()
+        clickFrames = Math.floor(60/4)
+    }
 
     var pp = { x: 320, y: 240 }
 
@@ -194,6 +226,11 @@ function loop() {
         r.draw(backCtx, rx, ry)
 
     })
+
+    if(SFX.rqSizzle) {
+        SFX.sizzle[SFX.iSizzle()].play()
+        SFX.rqSizzle = false
+    }
 
     backCtx.fillStyle = "white"
     backCtx.fillRect(317, 237, 6, 6)

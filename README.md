@@ -33,3 +33,11 @@ TODO
 * re-write spec to be coherent and to be a game manual
   - initial re-writing
   - actual manual PDF (a la old-skool)
+
+Attribution
+===========
+
+This project uses sound effects taken from the following locations:
+* https://www.freesound.org/people/mshahen/sounds/185446/#
+* https://www.freesound.org/people/George_Arkin/sounds/188622/#
+* https://www.freesound.org/people/jonccox/sounds/175261/

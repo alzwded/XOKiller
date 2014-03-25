@@ -52,6 +52,7 @@ function Bllt(x, y, theta) {
                     || inTriangle(enem.x, enem.y, sq[1], sq[2], sq[3])) {
                 enem.hp -= self.getDamage() * (self.getMaxWidth() / self.width)
                 self.hp -= self.getDecrement()
+                SFX.rqSizzle = true
             }
         })
 
