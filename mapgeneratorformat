@@ -69,6 +69,9 @@ generate_map:
     return spawnRoom
 
 generate_map_rec(r)
+    if !goalSet && rand() % 100 == 0
+        r.makeGoal() => turns it into a semi-empty room with a GOAL in it
+        gloaSet = true
     c--
     foreach exit in r.exits
         if(!exit) continue # exit available; it may not exist or it may have been taken already by the algorithm
@@ -80,9 +83,6 @@ generate_map_rec(r)
         r.adjacent[exit].adjacent[~exit] = r # back link
         r.adjacent[exit].exits[exit] = false # taken
         generate_map_rec(r.adjacent[exit]) # recurse
-    if !goalSet && rand() % 100 == 0
-        r.setGoal(true)
-        gloaSet = true
 
 seal_exit(exit)
     fill said border with solids
