@@ -8,19 +8,20 @@ See SPEC for specs.
 TODO
 ====
 
-* track room enemies are in
-  - ~~enemy ownership transfer~~ not tested
-* track room PC is in
-  - inactivate enemies which are not in visible rooms (max 4)
-  - player wall collision
+* ~~track room enemies are in~~
+  - ~~enemy ownership transfer~~
+* ~~track room PC is in~~
+  - ~~inactivate enemies which are not in visible rooms (max 4)~~
+  - ~~player wall collision~~
 * map generator
   - create many pre-fab maps
   - generator proper
-* Goal / victory conditions, floor counter
 * X enemy
 * BOSS enemy
-* points counter, time counter
-* lives system
+* risk vs. reward system
+  - lives system
+  - Goal / victory conditions, floor counter
+  - points counter, time counter
 * ~~spawn point~~
 * bullets
   - ~~PC bullets firing & mouse input~~
@@ -36,6 +37,11 @@ TODO
 * sound
   - ~~SFX~~
   - music
+
+What works
+==========
+
+You can control your blip using WASD and aim/shoot with your mouse. You can run around 5 rooms being chased by mindless circles. If the circles get you, they eat you forever.
 
 Attribution
 ===========
