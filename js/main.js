@@ -31,7 +31,7 @@ var SFX = {
     iSizzle: function() {
         this.__iSizzle = (this.__iSizzle + 1) % (4 * 30)
         return Math.floor(this.__iSizzle / 30)
-    }
+    },
 }
 var running = true
 var PC
@@ -42,19 +42,20 @@ function reset() {
 
     PC = new Plyr(360, 360)
 
-    spawnRoom = new Room(0, 0, 0)
-    PC.room = spawnRoom
-    var w = spawnRoom.map.width() * spawnRoom.map.cellL()
-    var h = spawnRoom.map.height() * spawnRoom.map.cellL()
-    spawnRoom.adjacent[0] = new Room(1, w, 0)
-    spawnRoom.adjacent[0].adjacent[2] = spawnRoom
-    spawnRoom.adjacent[1] = new Room(2, 0, -h)
-    spawnRoom.adjacent[1].adjacent[3] = spawnRoom
-    spawnRoom.adjacent[2] = new Room(3, -w, 0)
-    spawnRoom.adjacent[2].adjacent[0] = spawnRoom
-    spawnRoom.adjacent[3] = new Room(4, 0, h)
-    spawnRoom.adjacent[3].adjacent[1] = spawnRoom
-    //rooms[0].map.spawns = new Array()
+    //spawnRoom = new Room(0, 0, 0)
+    //var w = spawnRoom.map.width() * spawnRoom.map.cellL()
+    //var h = spawnRoom.map.height() * spawnRoom.map.cellL()
+    //spawnRoom.adjacent[0] = new Room(1, w, 0)
+    //spawnRoom.adjacent[0].adjacent[2] = spawnRoom
+    //spawnRoom.adjacent[1] = new Room(2, 0, -h)
+    //spawnRoom.adjacent[1].adjacent[3] = spawnRoom
+    //spawnRoom.adjacent[2] = new Room(3, -w, 0)
+    //spawnRoom.adjacent[2].adjacent[0] = spawnRoom
+    //spawnRoom.adjacent[3] = new Room(4, 0, h)
+    //spawnRoom.adjacent[3].adjacent[1] = spawnRoom
+    ////rooms[0].map.spawns = new Array()
+    spawnRoom = maps_new()
+    PC.room = spawnRoom.spawnRoom
 
     //var enemies = new Array()
     //enemies[0] = new Enem('O', 0.2, 0.2)
@@ -150,6 +151,8 @@ function initCanvas() {
             running = !running
         }
     }
+
+    maps_init()
 
     reset()
 

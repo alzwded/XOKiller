@@ -6,6 +6,7 @@ function Spwn(num, x, y, type) {
     this.y = y
     this.type = type
     this.loop = function(room) {
+    return
         ++this.ticks
         if(this.num == 0) {
             this.loop = function() {}
@@ -26,71 +27,65 @@ function Spwn(num, x, y, type) {
     }
 }
 
+function cpy1(o) {
+    var r = new Array()
+    for(var i in o) {
+        if(i) r.push(true)
+        else r.push(false)
+    }
+    return r
+}
+
+function cpyS(s) {
+    var r = new Array()
+    s.forEach(function(d) {
+        r.push(new Spwn(50, d.x / 36, d.y / 36, d.type))
+    })
+    return r
+}
+
+function cpyL(l) {
+    var r = new Array()
+    l.forEach(function(blk) {
+        if(blk) r.push(true)
+        else r.push(false)
+    })
+    return r
+}
+
 function Map(seed) {
-    this.exits = new Array(null, null, null, null) // used in map generation to inform which exits are possible
-    this.spawns = new Array()
-    this.layout = new Array()
+    var mapData = maps.all[seed]
+    this.exits = cpy1(mapData.exits)
+    this.spawns = cpyS(mapData.spawns)
+    this.layout = cpyL(mapData.layout)
     this.width = function() { return 36 }
     this.height = function() { return 36 }
     this.cellL = function() { return 20 } 
-    for(var i = 0; i < this.width(); ++i) {
-        for(var j = 0; j < this.height(); ++j) {
-            if(i == 0 || (i == this.width()-1) || j == 0 || (j == this.height()-1)) {
-                this.layout[i * this.width() + j] = true
-            } else {
-                this.layout[i * this.width() + j] = false
-            }
-        }
-    }
-    if(seed == 0) {
-        this.layout[18 * this.width() + 11] = true
-        this.layout[17 * this.width() + 11] = true
-        this.layout[16 * this.width() + 11] = true
-        this.layout[15 * this.width() + 11] = true
-        this.layout[19 * this.width() +  7] = true
-        this.layout[19 * this.width() +  8] = true
-        this.layout[19 * this.width() +  9] = true
-        this.layout[19 * this.width() + 11] = true
-        this.layout[19 * this.width() + 12] = true
-        this.layout[19 * this.width() + 13] = true
-        this.layout[ 7 * this.width() + 10] = true
-        this.layout[ 7 * this.width() + 11] = true
-        this.layout[ 9 * this.width() + 12] = true
-        this.layout[10 * this.width() + 12] = true
-        this.layout[10 * this.width() + 11] = true
-        for(var i = 12; i < this.width() - 12; ++i) {
-            this.layout[i * this.width() + 0] = false
-            this.layout[i * this.width() + this.width() - 1] = false
-        }
-        for(var j = 12; j < this.height() - 12; ++j) {
-            this.layout[0 + j] = false
-            this.layout[this.width()*(this.width() - 1) + j] = false
-        }
-    }
-    if(seed == 1) {
+
+    if(this.exits[0]) {
         var i = 0
         for(var j = 12; j < this.width() - 12; ++j) {
             this.layout[i * this.width() + j] = false
         }
-    } else if(seed == 2) {
+    }
+    if(this.exits[1]) {
         var j = this.height() - 1
         for(var i = 12; i < this.width() - 12; ++i) {
             this.layout[i * this.width() + j] = false
         }
-    } else if(seed == 3) {
+    }
+    if(this.exits[2]) {
         var i = this.width() - 1
         for(var j = 12; j < this.height() - 12; ++j) {
             this.layout[i * this.width() + j] = false
         }
-    } else if(seed == 4) {
+    }
+    if(this.exits[3]) {
         var j = 0
         for(var i = 12; i < this.width() - 12; ++i) {
             this.layout[i * this.width() + j] = false
         }
     }
-
-    this.spawns.push(new Spwn(100, 0.055, 0.23, 'O'))
-    this.spawns.push(new Spwn(100, 0.6, 0.2, 'O'))
 }
 
 function Room(seed, x, y) {
@@ -188,5 +183,68 @@ function Room(seed, x, y) {
         this.enemies.removeIf(function(enem) {
             return enem.hp <= 0 && enem.frame > 20
         })
+    }
+
+    var self = this
+    self.sealExit = function(i) {
+        if(i == 2) {
+            var i = 0
+            for(var j = 12; j < self.map.width() - 12; ++j) {
+                self.map.layout[i * self.map.width() + j] = true
+            }
+        } else if(i == 3) {
+            var j = self.map.height() - 1
+            for(var i = 12; i < self.map.width() - 12; ++i) {
+                self.map.layout[i * self.map.width() + j] = true
+            }
+        } else if(i == 0) {
+            var i = self.map.width() - 1
+            for(var j = 12; j < self.map.height() - 12; ++j) {
+                self.map.layout[i * self.map.width() + j] = true
+            }
+        } else if(i == 1) {
+            var j = 0
+            for(var i = 12; i < self.map.width() - 12; ++i) {
+                self.map.layout[i * self.map.width() + j] = true
+            }
+        }
+        self.map.exits[i] = false
+    }
+
+    self.makeGoalRoom = function() {
+        if(self.map.exits[2]) {
+            var i = 0
+            for(var j = 12; j < self.map.width() - 12; ++j) {
+                self.map.layout[i * self.map.width() + j] = true
+            }
+            self.map.exits[2] = false
+        }
+        if(self.map.exits[3]) {
+            var j = self.map.height() - 1
+            for(var i = 12; i < self.map.width() - 12; ++i) {
+                self.map.layout[i * self.map.width() + j] = true
+            }
+            self.map.exits[3] = false
+        }
+        if(self.map.exits[0]) {
+            var i = self.map.width() - 1
+            for(var j = 12; j < self.map.height() - 12; ++j) {
+                self.map.layout[i * self.map.width() + j] = true
+            }
+            self.map.exits[0] = false
+        }
+        if(self.map.exits[1]) {
+            var j = 0
+            for(var i = 12; i < self.map.width() - 12; ++i) {
+                self.map.layout[i * self.map.width() + j] = true
+            }
+            self.map.exits[1] = false
+        }
+        for(var i = 1; i < self.map.width() - 1; ++i) {
+            for(var j = 1; j < self.map.height() - 1; ++j) {
+                self.map.layout[i * self.map.width() + j] = false
+            }
+        }
+        self.map.spawns = new Array()
     }
 }
