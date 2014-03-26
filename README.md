@@ -13,9 +13,9 @@ TODO
 * ~~track room PC is in~~
   - ~~inactivate enemies which are not in visible rooms (max 4)~~
   - ~~player wall collision~~
-* map generator
-  - create many pre-fab maps
-  - generator proper
+* ~~map generator~~
+  - ~~create many pre-fab maps~~
+  - ~~generator proper~~
 * X enemy
 * BOSS enemy
 * risk vs. reward system
@@ -42,7 +42,7 @@ TODO
 What works
 ==========
 
-You can control your blip using WASD and aim/shoot with your mouse. You can run around 5 rooms being chased by mindless circles. If the circles get you, they eat you forever. You can pause the game with the ESCape key.
+You can control your blip using WASD and aim/shoot with your mouse. You can run around a randomly aranged map chased down by mindless circles. If the circles get you, they eat you forever. You can pause the game with the ESCape key.
 
 Attribution
 ===========
