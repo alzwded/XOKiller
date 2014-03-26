@@ -14,7 +14,7 @@ TODO
   - ~~inactivate enemies which are not in visible rooms (max 4)~~
   - ~~player wall collision~~
 * ~~map generator~~
-  - ~~create many pre-fab maps~~
+  - ~~create many pre-fab maps~~ well, not really. But there is a minimum to prove the algorithm sort of kinda works in the way it was intended :D
   - ~~generator proper~~
 * X enemy
 * BOSS enemy
