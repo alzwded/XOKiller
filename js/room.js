@@ -6,7 +6,6 @@ function Spwn(num, x, y, type) {
     this.y = y
     this.type = type
     this.loop = function(room) {
-    return
         ++this.ticks
         if(this.num == 0) {
             this.loop = function() {}
@@ -29,8 +28,8 @@ function Spwn(num, x, y, type) {
 
 function cpy1(o) {
     var r = new Array()
-    for(var i in o) {
-        if(i) r.push(true)
+    for(var i = 0; i < 4; ++i) {
+        if(o[i]) r.push(true)
         else r.push(false)
     }
     return r
@@ -39,7 +38,7 @@ function cpy1(o) {
 function cpyS(s) {
     var r = new Array()
     s.forEach(function(d) {
-        r.push(new Spwn(50, d.x / 36, d.y / 36, d.type))
+        r.push(new Spwn(50, (d.x + 0.5) / 36, (d.y + 0.5) / 36, d.type))
     })
     return r
 }
@@ -62,25 +61,25 @@ function Map(seed) {
     this.height = function() { return 36 }
     this.cellL = function() { return 20 } 
 
-    if(this.exits[0]) {
+    if(this.exits[2]) {
         var i = 0
         for(var j = 12; j < this.width() - 12; ++j) {
             this.layout[i * this.width() + j] = false
         }
     }
-    if(this.exits[1]) {
+    if(this.exits[3]) {
         var j = this.height() - 1
         for(var i = 12; i < this.width() - 12; ++i) {
             this.layout[i * this.width() + j] = false
         }
     }
-    if(this.exits[2]) {
+    if(this.exits[0]) {
         var i = this.width() - 1
         for(var j = 12; j < this.height() - 12; ++j) {
             this.layout[i * this.width() + j] = false
         }
     }
-    if(this.exits[3]) {
+    if(this.exits[1]) {
         var j = 0
         for(var i = 12; i < this.width() - 12; ++i) {
             this.layout[i * this.width() + j] = false

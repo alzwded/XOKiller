@@ -2,6 +2,10 @@ var maps
 var maps_c
 var maps_goalSet
 
+function maps_rand(max) {
+    return Math.floor(Math.random() * max)
+}
+
 function maps_init_local() {
     maps = {
         0: new Array(),
@@ -73,7 +77,7 @@ function maps_parse(lines) {
                 })
                 break
             case 'T':
-                treasures.push({
+                mapData.treasures.push({
                     x: i,
                     y: row,
                 })
@@ -86,7 +90,8 @@ function maps_parse(lines) {
     maps.all.push(mapData)
     for(var i = 0; i < 4; ++i) {
         if(mapData.exits[i]) {
-            maps[i].push(seed)
+            maps[(i + 2) % 4].push(seed)
+            //maps[i].push(seed)
         }
     }
 }
@@ -94,7 +99,7 @@ function maps_parse(lines) {
 function maps_new() {
     maps_c = 100
     maps_goalSet = false
-    var spawnRoom = new Room(Math.floor(Math.random()) % maps.all.length, 0, 0)
+    var spawnRoom = new Room(maps_rand(maps.all.length), 0, 0)
     spawnRoom.map.spawns = new Array()
     var numRooms = maps_generateMapRec(spawnRoom, false)
     return {
@@ -133,7 +138,7 @@ function maps_generateMapRec(r, canBeGoalRoom) {
     if(maps_c > 0) { --maps_c }
     if(canBeGoalRoom && 
             (maps_c <= 0 ||
-            (!maps_goalSet && Math.floor(Math.random()) % 100 == 0))) {
+            (!maps_goalSet && maps_rand(100) == 0))) {
        r.makeGoalRoom()
        maps_goalSet = true
        return num
@@ -144,7 +149,7 @@ function maps_generateMapRec(r, canBeGoalRoom) {
             r.sealExit(i)
             continue
         }
-        var seed = maps[i][Math.floor(Math.random() % maps[i].length)]
+        var seed = maps[i][maps_rand(maps[i].length)]
         var offset = maps_offsetFor(i)
         r.adjacent[i] = new Room(seed, r.x + offset.x, r.y + offset.y)
         var j = (i + 2) % 4

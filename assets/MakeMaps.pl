@@ -9,7 +9,7 @@ while(<A>) {
     print F "__mapdata.push(new Array(\n";
     chomp;
     my $mapName = $_;
-    open (my $map, $mapName);
+    open (my $map, $mapName) or die("cannot $mapName");
 
     while(<$map>) {
         chomp;
