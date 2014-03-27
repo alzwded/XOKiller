@@ -8,12 +8,10 @@ print F "var __mapdata = new Array()\n";
 while(<A>) {
     print F "__mapdata.push(new Array(\n";
     chomp;
-    my $mapName = $_;
-    open (my $map, $mapName) or die("cannot $mapName");
+    open (my $map, $_) or die("cannot $_");
 
     while(<$map>) {
         chomp;
-        my $line = $_;
         print F "  '$_',\n";
     }
 
